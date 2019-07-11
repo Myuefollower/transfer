@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <percounter.h>
+#include <inttypes.h>
 
 int main(int argc, char *argv[]){
 
@@ -129,11 +130,44 @@ int main(int argc, char *argv[]){
 	
 	nvmlUtilization_t *deviceUtilization = (nvmlUtilization_t*)malloc(sizeof(nvmlUtilization_t));
 	
+	unsigned int encoderUtilization;
+	unsigned int encoderSamplingPeriodUs;
+	
+	unsigned int decoderUtilization;
+	unsigned int decoderSamplingPeriodUs;
+	
+	
+	
+	unsigned long long totalPowerTimeStamp = 0; 
+	nvmlSample_t totalPowerSamples;
+	
+	unsigned long long gpuUtilizationTimeStamp = 0; 
+	nvmlSample_t gpuUtilizationSamples;
+	
+	unsigned long long memoryUtilizationTimeStamp = 0; 
+	nvmlSample_t memoryUtilizationSamples;
+	
+	unsigned long long encUtilizationTimeStamp = 0; 
+	nvmlSample_t encUtilizationSamples;
+
+	unsigned long long decUtilizationTimeStamp = 0; 
+	nvmlSample_t decUtilizationSamples;
+
+	unsigned long long processorCLKTimeStamp = 0; 
+	nvmlSample_t processorCLKSamples;	
+	
+	unsigned long long memoryCLKTimeStamp = 0; 
+	nvmlSample_t memoryCLKSamples;	
+	
+	
+	
+	
 	nvmlProcessInfo_t *infos = (nvmlProcessInfo_t*)malloc(sizeof(nvmlProcessInfo_t));
 	
 	nvmlBAR1Memory_t *bar1Memory = (nvmlBAR1Memory_t*)malloc(sizeof(nvmlBAR1Memory_t));
 	
-
+    unsigned int singleBitErrorpageCount = 0;
+    unsigned int doubleBitErrorpageCount = 0;
 
 // For Test
 
@@ -573,11 +607,26 @@ int main(int argc, char *argv[]){
 
 
 //int getEncoderUtilization()
+    if(getEncoderUtilization(device, &encoderUtilization, &encoderSamplingPeriodUs) == 0){
+	    printf("the encoder utilization is %u.\n",encoderUtilization);
+		printf("the encoder sampling period is %u.\n",encoderSamplingPeriodUs);
+	} else {
+	    printf("get Encoder Utilization failed.\n");
+	}
+    
+
 
 
 
 
 //int getDecoderUtilization()
+
+    if(getDecoderUtilization(device, &decoderUtilization, &decoderSamplingPeriodUs) == 0){
+	    printf("the decoder utilization is %u.\n",decoderUtilization);
+		printf("the decoder sampling period is %u.\n",decoderSamplingPeriodUs);
+	} else {
+	    printf("get Decoder Utilization failed.\n");
+	}
 
 
 //int getComputeRunningProcesses()
@@ -587,7 +636,62 @@ int main(int argc, char *argv[]){
 	} else {
 	    printf("get Compute Running Processes failed.\n");
 	}
+	
+//For getTotalPowerSamples()
+    if(getTotalPowerSamples(device, totalPowerTimeStamp, &totalPowerSamples) == 0){
+	    printf("timestamp of the total power sample is %"PRId64".\n",totalPowerSamples.timeStamp);
+		printf("total power sample is %u.\n",totalPowerSamples.sampleValue.uiVal);
+	} else {
+	    printf("get total power samples failed.\n");
+	}
 
+//For getGpuUtilizationSamples()
+    if(getGpuUtilizationSamples(device, gpuUtilizationTimeStamp, &gpuUtilizationSamples) == 0){
+	    printf("timestamp of the gpu utilization sample is %"PRId64".\n",gpuUtilizationSamples.timeStamp);
+		printf("gpu utilization sample is %u.\n",gpuUtilizationSamples.sampleValue.uiVal);
+	} else {
+	    printf("get gpu utilization samples failed.\n");
+	}
+
+//For getMemoryUtilizationSamples()
+    if(getMemoryUtilizationSamples(device, memoryUtilizationTimeStamp, &memoryUtilizationSamples) == 0){
+	    printf("timestamp of the memory utilization sample is %"PRId64".\n",memoryUtilizationSamples.timeStamp);
+		printf("memory utilization sample is %u.\n",memoryUtilizationSamples.sampleValue.uiVal);
+	} else {
+	    printf("get memory utilization samples failed.\n");
+	}
+
+//For getENCUtilizationSamples()
+    if(getENCUtilizationSamples(device, encUtilizationTimeStamp, &encUtilizationSamples) == 0){
+	    printf("timestamp of the ENC utilization sample is %"PRId64".\n",encUtilizationSamples.timeStamp);
+		printf("ENC utilization sample is %u.\n",encUtilizationSamples.sampleValue.uiVal);
+	} else {
+	    printf("get ENC utilization samples failed.\n");
+	}
+
+//For getDECUtilizationSamples()
+    if(getDECUtilizationSamples(device, decUtilizationTimeStamp, &decUtilizationSamples) == 0){
+	    printf("timestamp of the DEC utilization sample is %"PRId64".\n",decUtilizationSamples.timeStamp);
+		printf("DEC utilization sample is %u.\n",decUtilizationSamples.sampleValue.uiVal);
+	} else {
+	    printf("get DEC utilization samples failed.\n");
+	}
+
+//For getProcessorCLKSamples()
+    if(getProcessorCLKSamples(device, processorCLKTimeStamp, &processorCLKSamples) == 0){
+	    printf("timestamp of the Processor CLK sample is %"PRId64".\n",processorCLKSamples.timeStamp);
+		printf("Processor CLK sample is %u.\n",processorCLKSamples.sampleValue.uiVal);
+	} else {
+	    printf("get Processor CLK samples failed.\n");
+	}
+
+//For getMemoryCLKSamples()
+    if(getMemoryCLKSamples(device, memoryCLKTimeStamp, &memoryCLKSamples) == 0){
+	    printf("timestamp of the Memory CLK sample is %"PRId64".\n",memoryCLKSamples.timeStamp);
+		printf("Memory CLK sample is %u.\n",memoryCLKSamples.sampleValue.uiVal);
+	} else {
+	    printf("get Memory CLK samples failed.\n");
+	}
 
 
 //int getBAR1MemoryInfo()
@@ -601,6 +705,26 @@ int main(int argc, char *argv[]){
 
 
 //int getViolationStatus()
+
+
+
+//For getRetiredPagesSingleBitError()
+    if(getRetiredPagesSingleBitError(device, &singleBitErrorpageCount) == 0){
+	    printf("the number of single bit error retired pages is %u.\n", singleBitErrorpageCount);
+	} else {
+	    printf("get the number of single bit error retired pages failed.\n");
+	}
+
+
+//For getRetiredPagesDoubleBitError()
+    if(getRetiredPagesDoubleBitError(device, &doubleBitErrorpageCount) == 0){
+	    printf("the number of double bit error retired pages is %u.\n", doubleBitErrorpageCount);
+	} else {
+	    printf("get the number of double bit error retired pages failed.\n");
+	}
+
+
+
 
 //shutdown
     if(shutdown() == 0){
